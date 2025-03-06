@@ -3,3 +3,7 @@ numpy
 scikit-learn
 matplotlib
 seaborn
+tqdm
+torch
+pymsis
+dill
