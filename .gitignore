@@ -3,3 +3,9 @@
 .DS_Store
 .DS_Store?
 ._*
+
+# ignore cache and compile files
+**/*.pyc
+**/*.class
+**/*.o
+**/hapicache
