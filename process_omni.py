@@ -31,7 +31,7 @@ if __name__ == "__main__":
             filler.append(float(fill_val))
             
     # replace all filler values with NaNs
-    df = df.applymap(lambda x: np.nan if x in filler else x)
+    df = df.applymap(lambda x: np.nan if float(x) in filler else x)
     
     # set timestamps as index
     df.set_index('Timestamp', inplace=True)
