@@ -15,4 +15,4 @@ loss_fn = nn.MSELoss()
 
 train_loader = DataLoader(training_dataset, shuffle=True, num_workers=1)
 
-model.train(train_loader, loss_fn, init_lr=0.001, num_epochs=10)
+model.train_model(train_loader, loss_fn, init_lr=0.001, num_epochs=10)

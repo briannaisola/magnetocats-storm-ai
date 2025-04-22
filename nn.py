@@ -30,9 +30,9 @@ class NeuralNetwork(nn.Module):
         return x
     
     
-    def train(train_loader, loss_fn, init_lr, num_epochs=200):
+    def train_model(self, train_loader, loss_fn, init_lr, num_epochs=200):
         optimizer = optim.Adam(self.parameters(), lr=init_lr)
-        model.train()  # Put the model in training mode
+        self.train()  # Put the model in training mode
         for epoch in tqdm.trange(num_epochs, desc="Training model. Epoch"):
             for step_num, datum in enumerate(train_loader):  # Objects in a dataloader must be accessed this way
                 inputs, targets = datum
