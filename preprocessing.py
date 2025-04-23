@@ -202,24 +202,34 @@ def preprocess(initial_states_path, omni_path, goes_path, sat_density_path):
     
 
     # For each row in initial_states_data, create a vector that has the initial state and concat it with omni_data, goes_data, and champ_data at the same timestamp
-    input_data = pd.DataFrame(np.zeros(len(initial_states_data), len(omni_data.columns)+len(goes_data.columns)))
-    target_data = pd.DataFrame(np.zeros(len(initial_states_data, len(champ_data.columns))))
+    input_data = pd.DataFrame(np.zeros((len(initial_states_data), len(omni_data.columns)+len(goes_data.columns))))
+    target_data = pd.DataFrame(np.zeros((len(initial_states_data), len(champ_data.columns))))
     input_data.index = initial_states_data.index
     target_data.index = initial_states_data.index
     for timestamp in initial_states_data.index:
-        input_data.loc[timestamp] = pd.concat([initial_states_data.loc[timestamp],
-                                                omni_data.loc[timestamp],
-                                                goes_data.loc[timestamp]], axis=1)
-        target_data.loc[timestamp] = champ_data.loc[timestamp]
+        rounded_timestamp = timestamp.round("10T")
+        if rounded_timestamp in omni_data.index and rounded_timestamp in goes_data.index:
+            input_data.loc[timestamp] = pd.concat([initial_states_data.loc[timestamp],
+                                            omni_data.loc[rounded_timestamp],
+                                            goes_data.loc[rounded_timestamp]], ignore_index=True)
+            target_data.loc[timestamp] = champ_data.loc[rounded_timestamp]
+        else:
+            print(f"KeyError: {rounded_timestamp} not in omni_data or goes_data")
+            input_data.drop(timestamp, inplace=True, axis=0)
+            target_data.drop(timestamp, inplace=True, axis=0)
+
+    # input_data.index = initial_states_data.index
+    # target_data.index = initial_states_data.index
     
+
     del initial_states_data, omni_data, goes_data, champ_data
 
     combined_df = pd.concat([input_data, target_data], axis=1)
     
     # Do a train-valid-test split
     print("Doing train-test-valid split")
-    train_valid, test = train_test_split(combined_df, test_size=0.15)
-    train, valid = train_test_split(train_valid, test_size=0.18)
+    train_valid, test = train_test_split(combined_df, test_size=0.15, shuffle=True)
+    train, valid = train_test_split(train_valid, test_size=0.18, shuffle=True)
 
 
     # Split champ data from the rest
